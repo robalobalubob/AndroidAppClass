@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -136,11 +139,57 @@ public class Summary implements SortedListAdapter.ViewModel {
     return equals(model);
   }
 
+  /**
+   *
+   */
   public static final Comparator<Summary> COMPARATOR =
-      (courseModel1, courseModel2) -> 0;
+          (courseModel1, courseModel2) -> {
+        if (courseModel1.department.compareTo(courseModel2.department) > 0) {
+          return 1;
+        } else if (courseModel1.department.compareTo(courseModel2.department) < 0) {
+          return -1;
+        } else if (courseModel1.department.compareTo(courseModel2.department) == 0) {
+          if (courseModel1.number.compareTo(courseModel2.number) > 0) {
+            return 1;
+          }
+          if (courseModel1.number.compareTo(courseModel2.number) < 0) {
+            return -1;
+          }
+          if (courseModel1.number.compareTo(courseModel2.number) == 0) {
+            if (courseModel1.title.compareTo(courseModel2.title) > 0) {
+              return 1;
+            }
+            if (courseModel1.title.compareTo(courseModel2.title) < 0) {
+              return -1;
+            }
+            if (courseModel1.title.compareTo(courseModel2.title) == 0) {
+              return 0;
+            }
+          }
+        }
+        return 0;
+      };
 
+  /**
+   * @param courses
+   * @param text
+   * @return
+   */
+
+  @NotNull
   public static List<Summary> filter(
       @NonNull final List<Summary> courses, @NonNull final String text) {
-    return courses;
+    List<Summary> result = new ArrayList<Summary>();
+    for (Summary a : courses) {
+      if (a.department.toLowerCase().contains(text) || a.number.trim().equals(text)
+              || a.title.toLowerCase().contains(text.toLowerCase())) {
+        result.add(a);
+      } else if(a.number.startsWith(text)) {
+        result.add(a);
+      } else if(a.number.endsWith(text)) {
+        result.add(a);
+      }
+    }
+    return result;
   }
 }
