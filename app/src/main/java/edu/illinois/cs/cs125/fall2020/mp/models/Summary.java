@@ -176,17 +176,16 @@ public class Summary implements SortedListAdapter.ViewModel {
    * @return
    */
 
-  @NotNull
   public static List<Summary> filter(
-      @NonNull final List<Summary> courses, @NonNull final String text) {
+          @NonNull final List<Summary> courses, @NonNull final String text) {
     List<Summary> result = new ArrayList<Summary>();
     for (Summary a : courses) {
       if (a.department.toLowerCase().contains(text) || a.number.trim().equals(text)
               || a.title.toLowerCase().contains(text.toLowerCase())) {
         result.add(a);
-      } else if(a.number.startsWith(text)) {
+      } else if (a.number.startsWith(text)) {
         result.add(a);
-      } else if(a.number.endsWith(text)) {
+      } else if (a.number.endsWith(text)) {
         result.add(a);
       }
     }
