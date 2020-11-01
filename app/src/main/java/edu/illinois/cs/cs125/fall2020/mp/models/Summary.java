@@ -100,7 +100,7 @@ public class Summary implements SortedListAdapter.ViewModel {
   }
 
   /**
-   * @return full summary
+   * @return department with number and title
    */
   public final String summarize() {
     return department + " " + number + ": " + title;
