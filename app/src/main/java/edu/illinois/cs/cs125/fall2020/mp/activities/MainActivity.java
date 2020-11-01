@@ -115,6 +115,7 @@ public final class MainActivity extends AppCompatActivity
     return true;
   }
 
+
   /**
    * Callback fired when the user edits the text in the search query box.
    *
@@ -125,6 +126,12 @@ public final class MainActivity extends AppCompatActivity
    */
   @Override
   public boolean onQueryTextChange(final String query) {
+    if (!(query.equals(" "))) {
+      List<Summary> alpha = Summary.filter(courses, query);
+      listAdapter.edit().replaceAll(alpha).commit();
+    } else {
+      listAdapter.edit().replaceAll(courses).commit();
+    }
     return true;
   }
 

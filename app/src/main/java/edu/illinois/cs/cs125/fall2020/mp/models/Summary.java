@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -101,7 +100,7 @@ public class Summary implements SortedListAdapter.ViewModel {
   }
 
   /**
-   * @return
+   * @return full summary
    */
   public final String summarize() {
     return department + " " + number + ": " + title;
@@ -178,21 +177,24 @@ public class Summary implements SortedListAdapter.ViewModel {
       };
 
   /**
-   * @param courses
-   * @param text
-   * @return
+   * @param courses is list of courses being filtered
+   * @param text is the filterer
+   * @return result
    */
 
   public static List<Summary> filter(
           @NonNull final List<Summary> courses, @NonNull final String text) {
-    List<Summary> result = new ArrayList<Summary>();
+    List<Summary> result = new ArrayList<>();
     for (Summary a : courses) {
-      if (a.department.toLowerCase().contains(text) || a.number.trim().equals(text)
+      if (text.trim().toLowerCase().contains(a.department.toLowerCase())
+              && text.trim().toLowerCase().contains(a.title.toLowerCase())
+              && text.toLowerCase().contains(a.number.toLowerCase())) {
+        result.add(a);
+      } else if (text.trim().toLowerCase().contains(a.department.toLowerCase())
+              && text.trim().toLowerCase().contains(a.number)) {
+        result.add(a);
+      } else if (a.department.toLowerCase().contains(text.toLowerCase()) || a.number.contains(text)
               || a.title.toLowerCase().contains(text.toLowerCase())) {
-        result.add(a);
-      } else if (a.number.startsWith(text)) {
-        result.add(a);
-      } else if (a.number.endsWith(text)) {
         result.add(a);
       }
     }
