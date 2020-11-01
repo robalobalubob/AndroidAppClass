@@ -101,6 +101,13 @@ public class Summary implements SortedListAdapter.ViewModel {
   }
 
   /**
+   * @return
+   */
+  public final String summarize() {
+    return department + " " + number + ": " + title;
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
