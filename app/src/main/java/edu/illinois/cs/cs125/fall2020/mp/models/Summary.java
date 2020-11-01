@@ -179,7 +179,7 @@ public class Summary implements SortedListAdapter.ViewModel {
   /**
    * @param courses is list of courses being filtered
    * @param text is the filterer
-   * @return result
+   * @return resulting list
    */
 
   public static List<Summary> filter(
