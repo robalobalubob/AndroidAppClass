@@ -81,13 +81,28 @@ public final class Client {
             error -> Log.e(TAG, error.toString()));
     requestQueue.add(summaryRequest);
   }
-
   /**
    * get that course.
    * @param summary is summary
+   * @param callbacks is callback
    */
-  public void getCourse(final Summary summary) {
-
+  public void getCourse(@NonNull final Summary summary,
+                        @NonNull final CourseClientCallbacks callbacks) {
+    String url = CourseableApplication.SERVER_URL + "course/" + summary.getYear() + "/" + summary.getSemester();
+    StringRequest courseRequest =
+        new StringRequest(
+            Request.Method.GET,
+            url,
+            response -> {
+              try {
+                Course course = objectMapper.readValue(response, Course.class);
+                callbacks.courseResponse(summary, course);
+              } catch (JsonProcessingException e) {
+                e.printStackTrace();
+              }
+            },
+            error -> Log.e(TAG, error.toString()));
+    requestQueue.add(courseRequest);
   }
   private static Client instance;
 
