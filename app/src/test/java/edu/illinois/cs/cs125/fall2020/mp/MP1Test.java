@@ -190,7 +190,7 @@ public final class MP1Test {
     /**
      * Test the client getCourse method
      */
-    /*
+/*
     @Test(timeout = 20000L)
     @Graded(points = 20)
     public void testClientGetCourse() throws JsonProcessingException, InterruptedException, ExecutionException {
@@ -209,6 +209,7 @@ public final class MP1Test {
         compareCourseToSerializedSummary(course, summaryString);
       }
     }
+
 */
     /**
      * Test CourseActivity with intent.

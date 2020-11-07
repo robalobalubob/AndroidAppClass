@@ -40,7 +40,6 @@ public final class Server extends Dispatcher {
     if (parts.length != 2) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
     }
-
     String summary = summaries.get(parts[0] + "_" + parts[1]);
     if (summary == null) {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
@@ -51,6 +50,22 @@ public final class Server extends Dispatcher {
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final Map<Summary, String> courses = new HashMap<>();
 
+  private MockResponse getCourse(@NonNull final String path) {
+    String[] parts = path.split("/");
+    if (parts.length != 4) {
+      System.out.println(parts[0]);
+      System.out.println(parts[1]);
+      System.out.println(parts[2]);
+      System.out.println(parts[3]);
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+    }
+    Summary summary = new Summary(parts[0], parts[1], parts[2], parts[3], "");
+    String banal = courses.get(summary);
+    if (banal == null) {
+      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
+    }
+    return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(banal);
+  }
   @NonNull
   @Override
   public MockResponse dispatch(@NonNull final RecordedRequest request) {
@@ -62,6 +77,8 @@ public final class Server extends Dispatcher {
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK);
       } else if (path.startsWith("/summary/")) {
         return getSummary(path.replaceFirst("/summary/", ""));
+      } else if (path.startsWith("/course/")) {
+        return getCourse(path.replaceFirst("/course/", ""));
       }
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
     } catch (Exception e) {
