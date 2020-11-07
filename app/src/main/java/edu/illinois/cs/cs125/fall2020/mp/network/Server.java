@@ -52,13 +52,6 @@ public final class Server extends Dispatcher {
 
   private MockResponse getCourse(@NonNull final String path) {
     String[] parts = path.split("/");
-    if (parts.length != 4) {
-      System.out.println(parts[0]);
-      System.out.println(parts[1]);
-      System.out.println(parts[2]);
-      System.out.println(parts[3]);
-      return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
-    }
     Summary summary = new Summary(parts[0], parts[1], parts[2], parts[3], "");
     String banal = courses.get(summary);
     if (banal == null) {
