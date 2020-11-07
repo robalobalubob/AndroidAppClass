@@ -88,7 +88,9 @@ public final class Client {
    */
   public void getCourse(@NonNull final Summary summary,
                         @NonNull final CourseClientCallbacks callbacks) {
-    String url = CourseableApplication.SERVER_URL + "course/" + summary.getYear() + "/" + summary.getSemester();
+    String url = CourseableApplication.SERVER_URL + "course/" + summary.getYear() + "/"
+            + summary.getSemester() + "/" + summary.getDepartment() + "/" + summary.getNumber();
+
     StringRequest courseRequest =
         new StringRequest(
             Request.Method.GET,
