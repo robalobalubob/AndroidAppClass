@@ -1,10 +1,14 @@
 package edu.illinois.cs.cs125.fall2020.mp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SearchView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.wrdlbrnft.sortedlistadapter.SortedListAdapter;
 import edu.illinois.cs.cs125.fall2020.mp.R;
 import edu.illinois.cs.cs125.fall2020.mp.adapters.CourseListAdapter;
@@ -134,7 +138,7 @@ public final class MainActivity extends AppCompatActivity
     }
     return true;
   }
-
+  private ObjectMapper mapper = new ObjectMapper();
   /**
    * Callback fired when a user clicks on a course in the list view.
    *
@@ -143,5 +147,16 @@ public final class MainActivity extends AppCompatActivity
    * @param course the course that was clicked
    */
   @Override
-  public void onCourseClicked(final Summary course) {}
+  public void onCourseClicked(final Summary course) {
+    Intent startCourseActivity = new Intent(this, CourseActivity.class);
+    String json = null;
+    try {
+      json = mapper.writeValueAsString(course);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+
+    startCourseActivity.putExtra("COURSE", json);
+    startActivity(startCourseActivity);
+  }
 }
