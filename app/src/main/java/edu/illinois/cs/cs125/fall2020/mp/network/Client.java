@@ -111,7 +111,7 @@ public final class Client {
     requestQueue.add(courseRequest);
   }
   public void getRating(@NonNull final Summary summary,
-                        @NonNull final String clientID,
+                        @NonNull final String clientId,
                         @NonNull final CourseClientCallbacks callbacks) {
     throw new IllegalArgumentException();
   }
