@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.illinois.cs.cs125.fall2020.mp.R;
@@ -33,6 +34,7 @@ public class CourseActivity extends AppCompatActivity
   @Override
     protected void onCreate(final @NonNull Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     Intent intent = getIntent();
     binding = DataBindingUtil.setContentView(this, R.layout.activity_course);
     try {
