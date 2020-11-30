@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.illinois.cs.cs125.fall2020.mp.application.CourseableApplication;
 import edu.illinois.cs.cs125.fall2020.mp.models.Course;
+import edu.illinois.cs.cs125.fall2020.mp.models.Rating;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -52,6 +53,9 @@ public final class Client {
      * @param course a course
      */
     default void courseResponse(Summary summary, Course course) {}
+
+    default void yourRating(Summary summary, Rating rating) {}
+
   }
 
   /**
@@ -105,6 +109,16 @@ public final class Client {
             },
             error -> Log.e(TAG, error.toString()));
     requestQueue.add(courseRequest);
+  }
+  public void getRating(@NonNull final Summary summary,
+                        @NonNull final String clientID,
+                        @NonNull final CourseClientCallbacks callbacks) {
+    throw new IllegalArgumentException();
+  }
+  public void postRating(@NonNull final Summary summary,
+                        @NonNull final Rating rating,
+                        @NonNull final CourseClientCallbacks callbacks) {
+    throw new IllegalArgumentException();
   }
   private static Client instance;
 
