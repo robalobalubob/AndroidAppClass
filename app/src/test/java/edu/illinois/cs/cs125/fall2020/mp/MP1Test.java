@@ -101,7 +101,7 @@ public final class MP1Test {
 
     // Load summaries JSON
     String summaryJson =
-        new Scanner(MP1Test.class.getResourceAsStream("/2020_fall_summary.json"), "UTF-8").useDelimiter("\\A").next();
+            new Scanner(MP1Test.class.getResourceAsStream("/2020_fall_summary.json"), "UTF-8").useDelimiter("\\A").next();
     JsonNode summaryNodes = mapper.readTree(summaryJson);
     for (Iterator<JsonNode> it = summaryNodes.elements(); it.hasNext(); ) {
       JsonNode node = it.next();
