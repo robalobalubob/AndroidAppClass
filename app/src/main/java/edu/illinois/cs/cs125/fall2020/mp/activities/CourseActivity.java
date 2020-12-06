@@ -27,6 +27,8 @@ public class CourseActivity extends AppCompatActivity
   private ActivityCourseBinding binding;
   private ObjectMapper mapper = new ObjectMapper();
   private Summary alpha;
+  private Rating rated;
+  private Client client;
 
     /**
      * creates thing.
@@ -44,8 +46,10 @@ public class CourseActivity extends AppCompatActivity
       e.printStackTrace();
     }
     CourseableApplication application = (CourseableApplication) getApplication();
+    client = application.getCourseClient();
     application.getCourseClient().getCourse(alpha, this);
     application.getCourseClient().getRating(alpha, application.getClientID(), this);
+
 
   }
 
@@ -61,12 +65,14 @@ public class CourseActivity extends AppCompatActivity
 
   /**
    * get rating.
-   * @param summary
-   * @param rating
+   * @param summary course
+   * @param rating rating assigned to course
    */
   @Override
   public void yourRating(final Summary summary, final Rating rating) {
-    binding.rating.getRating();
+    CourseableApplication application = (CourseableApplication) getApplication();
+    System.out.println(rating.getRating());
+    rated = new Rating(application.getClientID(), rating.getRating());
+    binding.rating.setRating((float) rating.getRating());
   }
-
 }
