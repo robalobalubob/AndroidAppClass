@@ -2,6 +2,8 @@ package edu.illinois.cs.cs125.fall2020.mp.network;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
 import com.android.volley.ExecutorDelivery;
 import com.android.volley.Network;
@@ -54,6 +56,11 @@ public final class Client {
      */
     default void courseResponse(Summary summary, Course course) {}
 
+    /**
+     * gets client rating.
+     * @param summary summary retrieved
+     * @param rating rating retrieved
+     */
     default void yourRating(Summary summary, Rating rating) {}
 
   }
@@ -92,6 +99,7 @@ public final class Client {
    */
   public void getCourse(@NonNull final Summary summary,
                         @NonNull final CourseClientCallbacks callbacks) {
+
     String url = CourseableApplication.SERVER_URL + "course/" + summary.getYear() + "/"
             + summary.getSemester() + "/" + summary.getDepartment() + "/" + summary.getNumber();
 
@@ -110,15 +118,71 @@ public final class Client {
             error -> Log.e(TAG, error.toString()));
     requestQueue.add(courseRequest);
   }
+
+  /**
+   * send request for rating.
+   * @param summary the course summary
+   * @param clientId uuid
+   * @param callbacks your rating
+   */
   public void getRating(@NonNull final Summary summary,
                         @NonNull final String clientId,
                         @NonNull final CourseClientCallbacks callbacks) {
-    throw new IllegalArgumentException();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    String url = CourseableApplication.SERVER_URL + "rating/" + clientId + "/";
+
+    StringRequest ratingRequest =
+            new StringRequest(
+                    Request.Method.GET,
+                    url,
+                    response -> {
+                      Rating rating = null;
+                      String[] parts = response.split(",");
+                      String[] splits = parts[1].split(":");
+                      if (splits[1] == "-1.0") {
+                        callbacks.yourRating(summary, null);
+
+                      }
+                      try {
+                        rating = objectMapper.readValue(response, Rating.class);
+                        callbacks.yourRating(summary, rating);
+                      } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                      }
+                    },
+                    error -> Log.e(TAG, error.toString()));
+    requestQueue.add(ratingRequest);
   }
+
+  /**
+   * sends rating to server.
+   * @param summary the course
+   * @param rating the rating
+   * @param callbacks your rating
+   */
   public void postRating(@NonNull final Summary summary,
                         @NonNull final Rating rating,
                         @NonNull final CourseClientCallbacks callbacks) {
-    throw new IllegalArgumentException();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    String url = CourseableApplication.SERVER_URL + "rating/" + rating.getId() + "/";
+    StringRequest ratingRequest =
+            new StringRequest(
+                    Request.Method.POST,
+                    url,
+                    response -> callbacks.yourRating(summary, rating),
+                    error -> Log.e(TAG, error.toString())) {
+          @Override
+          public byte[] getBody() throws AuthFailureError {
+            String json = "";
+            try {
+              json = objectMapper.writeValueAsString(rating);
+            } catch (JsonProcessingException e) {
+              e.printStackTrace();
+            }
+            return json.getBytes();
+          }
+        };
+    requestQueue.add(ratingRequest);
   }
   private static Client instance;
 

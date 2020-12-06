@@ -15,6 +15,7 @@ import edu.illinois.cs.cs125.fall2020.mp.R;
 import edu.illinois.cs.cs125.fall2020.mp.application.CourseableApplication;
 import edu.illinois.cs.cs125.fall2020.mp.databinding.ActivityCourseBinding;
 import edu.illinois.cs.cs125.fall2020.mp.models.Course;
+import edu.illinois.cs.cs125.fall2020.mp.models.Rating;
 import edu.illinois.cs.cs125.fall2020.mp.models.Summary;
 import edu.illinois.cs.cs125.fall2020.mp.network.Client;
 
@@ -56,4 +57,15 @@ public class CourseActivity extends AppCompatActivity
   public void courseResponse(final Summary summary, final Course course) {
     binding.textview.setText(course.getDescription());
   }
+
+  /**
+   * get rating.
+   * @param summary
+   * @param rating
+   */
+  @Override
+  public void yourRating(final Summary summary, final Rating rating) {
+    binding.rating.getRating();
+  }
+
 }
