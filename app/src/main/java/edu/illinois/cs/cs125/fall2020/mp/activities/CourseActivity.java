@@ -45,6 +45,7 @@ public class CourseActivity extends AppCompatActivity
     }
     CourseableApplication application = (CourseableApplication) getApplication();
     application.getCourseClient().getCourse(alpha, this);
+    application.getCourseClient().getRating(alpha, application.getClientID(), this);
 
   }
 
