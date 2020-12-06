@@ -60,7 +60,8 @@ public final class Server extends Dispatcher {
     }
     return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(banal);
   }
-  private final Map<String, Rating> ratings = new HashMap<>();
+  private final Map<String, Map<Summary, Rating>> courseRatings = new HashMap<>();
+  private final Map<String, Rating> singleRatings = new HashMap<>();
 
   private MockResponse getRating(@NonNull final String path, @NonNull final RecordedRequest request)
           throws JsonProcessingException {
@@ -68,6 +69,32 @@ public final class Server extends Dispatcher {
 
     String[] split = path.split("/");
     String uuid = "";
+    if (split.length <= 2) {
+      uuid = split[0];
+      if (request.getMethod().equals("GET")) {
+        if (singleRatings.get(uuid) == null) {
+          Rating rate = new Rating(uuid, Rating.NOT_RATED);
+          String json = mapper.writeValueAsString(rate);
+          return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(json);
+        }
+        String json = mapper.writeValueAsString(singleRatings.get(uuid));
+        return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(json);
+      } else if (request.getMethod().equals("POST")) {
+        String json = request.getBody().readUtf8();
+        Rating rating = mapper.readValue(json, Rating.class);
+        if (!rating.getId().equals(uuid)) {
+          System.out.println(rating.getId());
+          System.out.println("not matching uuid");
+          return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
+        } else if (rating == null) {
+          return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
+        } else {
+          return new MockResponse().setResponseCode(HttpURLConnection.HTTP_MOVED_TEMP).setHeader(
+                  "Location", "/rating/" + path
+          );
+        }
+      }
+    }
     if (split.length > 2) {
       try {
         String[] splice = split[3].split("=");
@@ -90,24 +117,33 @@ public final class Server extends Dispatcher {
     if (uuid == "") {
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
     }
+    Summary summary = new Summary(split[0], split[1], split[2], split[3].substring(0, 3), "");
+    Map<Summary, Rating> ratings = courseRatings.getOrDefault(uuid, new HashMap<>());
+    System.out.println("request method");
     if (request.getMethod().equals("GET")) {
-      if (ratings.get(uuid) == null) {
+      if (courseRatings.getOrDefault(uuid, new HashMap<>()).get(summary) == null) {
         Rating rate = new Rating(uuid, Rating.NOT_RATED);
         String json = mapper.writeValueAsString(rate);
+        ratings.put(summary, rate);
+        courseRatings.put(uuid, ratings);
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(json);
       }
-      String json = mapper.writeValueAsString(ratings.get(uuid));
+      String json = mapper.writeValueAsString(courseRatings.get(uuid).get(summary));
       return new MockResponse().setResponseCode(HttpURLConnection.HTTP_OK).setBody(json);
     } else if (request.getMethod().equals("POST")) {
       String json = request.getBody().readUtf8();
       Rating rating = mapper.readValue(json, Rating.class);
-      if (rating.getId() != uuid) {
+      if (!rating.getId().equals(uuid)) {
+        System.out.println(rating.getId());
+        System.out.println("not matching uuid");
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_BAD_REQUEST);
       } else if (rating == null) {
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND);
       } else {
+        ratings.put(summary, rating);
+        courseRatings.put(uuid, ratings);
         return new MockResponse().setResponseCode(HttpURLConnection.HTTP_MOVED_TEMP).setHeader(
-                "Location", "/rating/"
+                "Location", "/rating/" + path
         );
       }
     }
