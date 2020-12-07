@@ -2,6 +2,7 @@ package edu.illinois.cs.cs125.fall2020.mp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.RatingBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +24,13 @@ import edu.illinois.cs.cs125.fall2020.mp.network.Client;
  *
  */
 public class CourseActivity extends AppCompatActivity
-    implements Client.CourseClientCallbacks {
+    implements Client.CourseClientCallbacks, RatingBar.OnRatingBarChangeListener {
   private ActivityCourseBinding binding;
   private ObjectMapper mapper = new ObjectMapper();
   private Summary alpha;
   private Rating rated;
   private Client client;
+  private CourseableApplication application;
 
     /**
      * creates thing.
@@ -45,12 +47,11 @@ public class CourseActivity extends AppCompatActivity
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
-    CourseableApplication application = (CourseableApplication) getApplication();
+    application = (CourseableApplication) getApplication();
     client = application.getCourseClient();
     application.getCourseClient().getCourse(alpha, this);
     application.getCourseClient().getRating(alpha, application.getClientID(), this);
-
-
+    binding.rating.setOnRatingBarChangeListener(this);
   }
 
   /**
@@ -70,9 +71,19 @@ public class CourseActivity extends AppCompatActivity
    */
   @Override
   public void yourRating(final Summary summary, final Rating rating) {
-    CourseableApplication application = (CourseableApplication) getApplication();
     System.out.println(rating.getRating());
-    rated = new Rating(application.getClientID(), rating.getRating());
     binding.rating.setRating((float) rating.getRating());
+  }
+
+  /**
+   * it worked.
+   * @param ratingBar bar of rates
+   * @param v no clue
+   * @param b nope
+   */
+  @Override
+  public void onRatingChanged(final RatingBar ratingBar, final float v, final boolean b) {
+    rated = new Rating(application.getClientID(), ratingBar.getRating());
+    application.getCourseClient().postRating(alpha, rated, this);
   }
 }

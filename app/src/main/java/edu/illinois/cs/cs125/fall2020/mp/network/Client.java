@@ -129,7 +129,9 @@ public final class Client {
                         @NonNull final String clientId,
                         @NonNull final CourseClientCallbacks callbacks) {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    String url = CourseableApplication.SERVER_URL + "rating/" + clientId + "/";
+    String url = CourseableApplication.SERVER_URL + "rating/" + summary.getYear() + "/"
+              + summary.getSemester() + "/" + summary.getDepartment() + "/" + summary.getNumber()
+              + "?client=" + clientId;
 
     StringRequest ratingRequest =
             new StringRequest(
@@ -164,7 +166,9 @@ public final class Client {
                         @NonNull final Rating rating,
                         @NonNull final CourseClientCallbacks callbacks) {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    String url = CourseableApplication.SERVER_URL + "rating/" + rating.getId() + "/";
+    String url = CourseableApplication.SERVER_URL + "rating/" + summary.getYear() + "/"
+            + summary.getSemester() + "/" + summary.getDepartment() + "/" + summary.getNumber()
+            + "?client=" + rating.getId();
     StringRequest ratingRequest =
             new StringRequest(
                     Request.Method.POST,
