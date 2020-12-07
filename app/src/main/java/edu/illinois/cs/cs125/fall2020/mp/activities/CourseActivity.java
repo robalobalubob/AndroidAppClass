@@ -61,6 +61,8 @@ public class CourseActivity extends AppCompatActivity
    */
   @Override
   public void courseResponse(final Summary summary, final Course course) {
+    String title = course.getDepartment() + " " + course.getNumber() + " " + course.getTitle();
+    binding.texttitle.setText(title);
     binding.textview.setText(course.getDescription());
   }
 
